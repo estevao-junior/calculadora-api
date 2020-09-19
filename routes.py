@@ -1,5 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import math
+from statistics import mode
+from statistics import harmonic_mean
+from statistics import mean
 
 app = Flask("Trabalho_Api")
 
@@ -90,48 +93,38 @@ def Potencia():
     
     return resultado
 
-@app.route("/media_aritmetica", methods=["POST"])
-def MediaAritmetica():
-    body = request.get_json()
-    resultado = ""
-    result = 0    
-    lista = []
+@app.route("/media_aritmetica/<value>", methods=["GET"])
+def MediaAritmetica(value):
+    try:
+        array = [float(numbers) for numbers in value.split(';')]
+    except:
+        return 'Os valores devem ser apenas numeros.'
 
-    if(len(body) > 0):
-        for x in body:
-            lista.append(body[x])
+    result = {"Resultado": mean(array)}
 
-    if(len(body) <= 0):
-        resultado = "Nenhum número recebido, verifique e tente novamente."
-    else:
-        soma = 0
-        for i in lista:
-            soma = soma + i        
-        result = soma / len(lista)
-        resultado = "O resultado da média aritmetica é: "+str(result)+""
+    return result
 
-    return resultado
+@app.route("/media_harmonica/<value>", methods=["GET"])
+def MediaHarmonica(value):
+    try:
+        array = [float(numbers) for numbers in value.split(';')]
+    except:
+        return 'Os valores devem ser apenas numeros.'
 
-@app.route("/media_harmonica", methods=["POST"])
-def MediaHarmonica():
-    body = request.get_json()
-    resultado = ""
-    result = 0
-    lista = []
+    result = {"Resultado": harmonic_mean(array)}
 
-    if(len(body) > 0):
-        for x in body:
-            lista.append(body[x])
+    return result
 
-    if(len(body) <= 0):
-        resultado = "Nenhum número recebido, verifique e tente novamente."
-    else:
-        soma = 0
-        for i in lista:
-            soma = soma + i        
-        result = soma / len(lista)
-        resultado = "O resultado da média aritmetica é: "+str(result)+""
+@app.route("/moda/<value>", methods=["GET"])
+def Moda(value):
+    try:
+        array = [int(numbers) for numbers in value.split(';')]
+    except:
+        return 'Os valores devem ser apenas numeros.'
 
-    return resultado
+    resultado = mode(array) 
+    result = {"Resultado": resultado}
+
+    return result
 
 app.run()
